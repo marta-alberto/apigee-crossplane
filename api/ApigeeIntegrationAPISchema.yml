@@ -107,7 +107,7 @@ components:
         team_member_mail:
           type: string
 
-    RoleBinding:
+#    RoleBinding:
       #TODO: bind a role to the users and viceversa
 
     EnvironmentRequest:
