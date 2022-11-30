@@ -131,7 +131,10 @@ components:
         - environment_id
         - environment
       properties:
-        environment_id: # TODO: add a composed value out of region, tenant, stage and application name @Marta
+        # TODO: add in environment_id a composed value out of region, tenant, stage and application name @Marta
+        environment_id:
+          description: id of the environment
+          type: string
         environment:
           $ref: '#/components/schemas/Environment'
         roles:
