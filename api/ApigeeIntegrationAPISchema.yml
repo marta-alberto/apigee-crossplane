@@ -105,9 +105,6 @@ components:
         mail:
           type: string
 
-      #    RoleBinding:
-      # TODO: bind a role to the users and viceversa
-
     EnvironmentRequest:
       description: Request element composed with all the fields required to identify completely an environment
       type: object
@@ -138,7 +135,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Role'
-
 
     Error:
       description: Error message of a client side error as server response
@@ -225,6 +221,3 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
-
-
