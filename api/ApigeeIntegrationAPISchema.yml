@@ -13,32 +13,30 @@ info:
     **Resources**: 
     - Environment
     - Role
-    - User
-    - ApigeeProxy</br>
 
     The required **endpoints** for a first version are: 
     - $PATH/fcp/environments/
     - method allowed: POST
     - request type: application/json
-    - response type: application/json</br>
+    - response type: application/json
 
     - $PATH/fcp/environments/$environment/status
     - method allowed: GET
     - request type: application/json
     - response type: application/json
     - query_params: filter with possible values: (environment, role, user, oidc-proxy)</br>
-    
+
   version: 1.0.0
   contact:
     email: apiteam@allianz.de # Maybe provide a group/technical email, not personal, does it exist?
 
 servers:     # Maybe define two or three different servers, like test.*, sandbox.*, api.*
-- url: 'https://someserver.aws.aztec.cloud.allianz'    
-  # Maybe it is a good idea describe the server using the `description` field 
+  - url: 'https://someserver.aws.aztec.cloud.allianz'
+    # Maybe it is a good idea describe the server using the `description` field
 
-components: 
-  schemas: 
-# Maybe you can write an example value for the fields
+components:
+  schemas:
+    # Maybe you can write an example value for the fields
     Environment:
       description: An Apigee environment resource existing in relation to a specific fcp_profile and application within an Apigee organization (defined by region and tenant of the application)
       type: object
@@ -47,68 +45,68 @@ components:
         - application
         - stage
       properties:
-        fcp_profile: 
+        fcp_profile:
           type: string
-        application: 
+        application:
           $ref: '#/components/schemas/Application'
-        stage: 
+        stage:
           enum:
-            - "stage_noprod"
-            - "stage_prod"
-        
-    Application: 
+            - "noprod"
+            - "prod"
+
+    Application:
       description: Entity that holds information related to the business application, for which the Apigee environment is created
       type: object
       required:
         - name
         - region
         - tenant
-      properties: 
-        name: 
+      properties:
+        name:
           type: string
         region:
           enum:
             - "eu"
             - "as"
-        tenant: 
-          enum: 
+        tenant:
+          enum:
             - "private"
             - "public"
 
     Role:
       description: Role that is created within an Apigee environment and is assigned to specific users
       type: object
-      required: 
+      required:
         - role_template
         - environment
-      properties: 
+      properties:
         role_template:
-          enum: 
+          enum:
             - "po"
             - "devops"
-        environment:   
+        environment:
           $ref: '#/components/schemas/Environment'
-        users: 
+        mails:
           type: array
           items:
-            $ref: '#/components/schemas/User'
+            type: string
 
     User:
       description: A user can assume a role that authorizes access to a specific environment with specific permissions
       type: object
-      required: 
+      required:
         - roles
-        - team_member_mail
-      properties: 
+        - mail
+      properties:
         roles:
           type: array
-          items: 
+          items:
             $ref: '#/components/schemas/Role'
-        team_member_mail:
+        mail:
           type: string
 
-#    RoleBinding:
-      #TODO: bind a role to the users and viceversa
+      #    RoleBinding:
+      # TODO: bind a role to the users and viceversa
 
     EnvironmentRequest:
       description: Request element composed with all the fields required to identify completely an environment
@@ -133,7 +131,6 @@ components:
       properties:
         # TODO: add in environment_id a composed value out of region, tenant, stage and application name @Marta
         environment_id:
-          description: id of the environment
           type: string
         environment:
           $ref: '#/components/schemas/Environment'
@@ -141,10 +138,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Role'
-        users: # still necessary?
-          type: array
-          items:
-            $ref: '#/components/schemas/User'
+
 
     Error:
       description: Error message of a client side error as server response
@@ -160,21 +154,21 @@ components:
           example: Field payment provider in request missing
 
 paths:
-  /fcp/environments: 
-    post: 
+  /fcp/environments:
+    post:
       summary: Posts a new environment to an Apigee Organization
       description: |
         This operation creates a new environment and accompanying resources like the respective roles for a specific FCP Profile and Application name in an Apigee Organization defined by the region, tenant type and stage selection.
       operationId: addApigeeEnvironment
-      requestBody: 
+      requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/EnvironmentRequest'
-      responses: 
-        '201': 
+      responses:
+        '201':
           description: Successful operation
-          content: 
+          content:
             header: # TODO: add a resource to link the created environment
               schema:
                 $ref: '#/components/schemas/EnvironmentResponse'
@@ -183,36 +177,36 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error' 
-  
+                $ref: '#/components/schemas/Error'
+
   /fcp/environments/{id}/status:
     get:
       summary: View of the Status of a specific Environment found by its identifier
       description: |
         This operation makes possible to monitor the status of the creation of a specific Apigee environment, filtering by environment, role, user
       operationId: viewApigeeEnvironmentStatus
-      parameters: 
+      parameters:
         - name: id
           in: path
-          description: Identifier of the Apigee environment 
+          description: Identifier of the Apigee environment
           required: true
           schema:
             type: string
 
         - name: role
-          in: query 
+          in: query
           description: Query parameter to filter by the role
           explode: false
           required: false
           schema:
             enum:
-            - "po"
-            - "devops"
+              - "po"
+              - "devops"
 
-        - name: user
+        - name: mail
           in: query
           description: Query parameter to filter by the user via email
-          explode: false 
+          explode: false
           required: false
           schema:
             type: string
@@ -230,7 +224,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error' 
+                $ref: '#/components/schemas/Error'
 
 
 
