@@ -53,6 +53,11 @@ components:
           enum:
             - "noprod"
             - "prod"
+        status:
+          enum:
+            - "requested"
+            - "valid"
+            - "invalid"
 
     Application:
       description: Entity that holds information related to the business application, for which the Apigee environment is created
