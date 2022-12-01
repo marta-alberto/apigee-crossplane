@@ -44,6 +44,7 @@ components:
         - fcp_profile
         - application
         - stage
+        - status
       properties:
         fcp_profile:
           type: string
