@@ -44,6 +44,7 @@ components:
         - fcp_profile
         - application
         - stage
+        - roles
         - status
       properties:
         fcp_profile:
@@ -54,6 +55,10 @@ components:
           enum:
             - "noprod"
             - "prod"
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
         status:
           enum:
             - "requested"
@@ -84,46 +89,25 @@ components:
       type: object
       required:
         - role_template
-        - environment
+        - members_mail
       properties:
         role_template:
           enum:
             - "po"
             - "devops"
-        environment:
-          $ref: '#/components/schemas/Environment'
-        mails:
+        members_mail:
           type: array
           items:
             type: string
-
-    User:
-      description: A user can assume a role that authorizes access to a specific environment with specific permissions
-      type: object
-      required:
-        - roles
-        - mail
-      properties:
-        roles:
-          type: array
-          items:
-            $ref: '#/components/schemas/Role'
-        mail:
-          type: string
 
     EnvironmentRequest:
       description: Request element composed with all the fields required to identify completely an environment
       type: object
       required:
         - environment
-        - roles
       properties:
         environment:
           $ref: '#/components/schemas/Environment'
-        roles:
-          type: array
-          items:
-            $ref: '#/components/schemas/Role'
 
     EnvironmentResponse:
       description: Response element composed with all the fields required to identify completely an environment
@@ -137,10 +121,6 @@ components:
           type: string
         environment:
           $ref: '#/components/schemas/Environment'
-        roles:
-          type: array
-          items:
-            $ref: '#/components/schemas/Role'
 
     Error:
       description: Error message of a client side error as server response
@@ -227,4 +207,3 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
